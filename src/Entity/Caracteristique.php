@@ -34,12 +34,13 @@ class Caracteristique
     #[ORM\OneToOne(mappedBy: 'caracteristiques', cascade: ['persist', 'remove'])]
     private ?Joueur $joueur = null;
 
-    public function __construct($rnm, $vts, $tr, $slr, $drbbl) {
+    public function __construct($rnm, $vts, $tr, $slr, $drbbl, $rnmm) {
         $this->renommee = $rnm;
         $this->vitesse = $vts;
         $this->tir = $tr;
-        $this->salaire = $tr;
+        $this->salaire = $slr;
         $this->dribble = $drbbl;
+        $this->renommee = $rnmm;
     }
 
     public function getId(): ?int

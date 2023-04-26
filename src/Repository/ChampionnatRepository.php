@@ -19,6 +19,7 @@ class ChampionnatRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Championnat::class);
+        $this->registry = $registry;
     }
 
     public function save(Championnat $entity, bool $flush = false): void
@@ -39,6 +40,22 @@ class ChampionnatRepository extends ServiceEntityRepository
         }
     }
 
+    // // méthode vérifiant qu'une année entrée en argument n'a pas déjà un championnat d'enregistré
+    // public static function checkYear($year) : bool {
+    //     $repo = new ChampionnatRepository($this->registry);
+    //     $allYears = [];
+
+    //     // on récupère toutes les années où un championnat a eu lieu
+    //     foreach($repo->findAll() as $champ) {
+    //         array_push($allYears, $champ->getAnnee());
+    //     }
+
+    //     // si l'année est déjà enregistrée
+    //     if(array_search($year, $allYears) !== FALSE) {
+    //         return FALSE;
+    //     }
+    //     return TRUE;
+    // }
 //    /**
 //     * @return Championnat[] Returns an array of Championnat objects
 //     */

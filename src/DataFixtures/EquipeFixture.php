@@ -1,59 +1,35 @@
 <?php
 
-namespace App\Controller;
+namespace App\DataFixtures;
 
 use App\Entity\Equipe;
 use App\Entity\Joueur;
-use App\Entity\Championnat;
 use App\Entity\Manager;
-use App\Repository\ChampionnatRepository;
 use App\Entity\Caracteristique;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Persistence\ManagerRegistry;
 
-class TestController extends AbstractController
+class EquipeFixture extends Fixture
 {
     private $faker;
-    
+
     public function __construct() {
         $this->faker = Factory::create();
     }
 
-    #[Route('/test', name: 'app_test')]
-    public function index(ChampionnatRepository $repo): Response
+    // méthode randomisant 100 équipes
+    public function load(ObjectManager $objManager): void
     {
-        // $this->checkYear($repo);
-        // dump();
-        // dump($this->randStaff());
-        $this->load();
-        return $this->render('test/index.html.twig', [
-            'controller_name' => 'TestController',
-        ]);
-    }
-    // méthode générant 30 championnats aléatoires
-    public function load()
-    {
-        for ($i = 0; $i < 30; $i++) {
-            $annee = 1950 + $i . "";
-            // dump($annee);
-            dump($this->randChamp($annee));
+        for ($i = 0; $i < 100; $i++) {
+            // génération d'une équipe
+            $equipe = $this->randEquipe($objManager);
+            // persistance de chaque équipe
+            $objManager->persist($equipe);
         }
-
-        $manager->flush();
+        $objManager->flush();
     }
-
-    private function randChamp($year) {
-        return new Championnat($year);
-    }
-
 
     // méthode randomisant des caractéristiques de joueur
     private function randCaracts(EntityManager $em) : Caracteristique {
@@ -173,15 +149,6 @@ class TestController extends AbstractController
         );
     }
 
-    // méthode générant un manager aléatoire selon son poste et l'ajoute à un staff entré en argument
-    private function addRandManager(/* array */ $staff, $poste) {
-        $manager = $this->randManager($poste);
-        // ajout du manager au staff
-        array_push($staff, $manager);
-
-        return $staff;
-    }
-
     // méthode randomisant un staff complet et le retournant
     private function randStaff() {
         $staff = [];
@@ -198,13 +165,12 @@ class TestController extends AbstractController
             // randomisation de 1 à 5 entraîneurs (nombre aléatoire)
             if ($poste == 'Entraîneur') {
                 for ($i=0; $i<mt_rand(1, 5); $i++) {
-                    array_push($staff, $poste);
+                    array_push($staff, $this->randManager($poste));
                 }
             }
-            array_push($staff, $poste);
+            array_push($staff, $this->randManager($poste));
         }
         
         return $staff;
     }
 }
-

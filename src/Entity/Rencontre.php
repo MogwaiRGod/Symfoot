@@ -40,6 +40,14 @@ class Rencontre
     #[ORM\JoinColumn(nullable: false)]
     private ?Equipe $equipe2 = null;
 
+    public function __construct(string $dt, Equipe $eq1, Equipe $eq2) {
+        $this->occasions1 = $this->randOccasion();
+        $this->occasions2 = $this->randOccasion();
+        $this->date = $dt;
+        $this->equipe1 = $eq1;
+        $this->equipe2 = $eq2;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -139,5 +147,9 @@ class Rencontre
         $this->equipe2 = $equipe2;
 
         return $this;
+    }
+
+    private function randOccasion() {
+        return mt_rand(0, 20);
     }
 }

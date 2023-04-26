@@ -18,8 +18,15 @@ class Championnat
     #[ORM\OneToMany(mappedBy: 'championnat', targetEntity: Rencontre::class, orphanRemoval: true)]
     private Collection $calendrier;
 
-    public function __construct()
+    #[ORM\Column(length: 5)]
+    private ?string $annee = null;
+
+    #[ORM\ManyToOne(inversedBy: 'championnats')]
+    private ?Equipe $vainqueur = null;
+
+    public function __construct($year)
     {
+        $this->annee = $year;
         $this->calendrier = new ArrayCollection();
     }
 
@@ -54,6 +61,30 @@ class Championnat
                 $calendrier->setChampionnat(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAnnee(): ?string
+    {
+        return $this->annee;
+    }
+
+    public function setAnnee(string $annee): self
+    {
+        $this->annee = $annee;
+
+        return $this;
+    }
+
+    public function getVainqueur(): ?Equipe
+    {
+        return $this->vainqueur;
+    }
+
+    public function setVainqueur(?Equipe $vainqueur): self
+    {
+        $this->vainqueur = $vainqueur;
 
         return $this;
     }

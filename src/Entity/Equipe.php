@@ -36,14 +36,18 @@ class Equipe
     #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Manager::class)]
     private Collection $staff;
 
+    #[ORM\OneToMany(mappedBy: 'vainqueur', targetEntity: Championnat::class)]
+    private Collection $championnats;
+
     public function __construct($vll, $nm, $bdgt, $rnmm)
     {
         $this->ville = $vll;
         $this->nom = $nm;
         $this->budget = $bdgt;
-        $this->renomme = $rnmm;
+        $this->renommee = $rnmm;
         $this->joueurs = new ArrayCollection();
         $this->staff = new ArrayCollection();
+        $this->championnats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -165,6 +169,36 @@ class Equipe
             // set the owning side to null (unless already changed)
             if ($staff->getEquipe() === $this) {
                 $staff->setEquipe(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Championnat>
+     */
+    public function getChampionnats(): Collection
+    {
+        return $this->championnats;
+    }
+
+    public function addChampionnat(Championnat $championnat): self
+    {
+        if (!$this->championnats->contains($championnat)) {
+            $this->championnats->add($championnat);
+            $championnat->setVainqueur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChampionnat(Championnat $championnat): self
+    {
+        if ($this->championnats->removeElement($championnat)) {
+            // set the owning side to null (unless already changed)
+            if ($championnat->getVainqueur() === $this) {
+                $championnat->setVainqueur(null);
             }
         }
 
