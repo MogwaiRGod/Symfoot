@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+<style>
+    .col-accueil {
+        margin: 1%;
+        display: block;
+    }
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="col-sm-4 p-3">
+    <a class="btn btn-primary col-accueil" href="/create/team">Créer nouvelle équipe</a>
+    <a class="btn btn-primary col-accueil">Sélectionner équipe</a>
+    <a class="btn btn-success col-accueil">Nouvelle saison</a>
+    <a class="btn btn-primary col-accueil">Historique</a>
+</div>
+<div>
+</div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        {# console.log(document.getElementById('newEquipe')); #}
+        {# newEquipe.addEventListener('click', () => {
+            console.log("oui");
+        }); #}
+    </script>
+{% endblock %}

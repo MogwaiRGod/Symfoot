@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Equipe;
 use App\Entity\Joueur;
 use App\Entity\Championnat;
+use App\Entity\Rencontre;
 use App\Entity\Manager;
 use App\Repository\ChampionnatRepository;
 use App\Entity\Caracteristique;
@@ -30,90 +31,24 @@ class TestController extends AbstractController
     #[Route('/test', name: 'app_test')]
     public function index(ChampionnatRepository $repo): Response
     {
-        // $this->checkYear($repo);
-        // dump();
-        // dump($this->randStaff());
-        $this->load();
+        $test = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        dump($this->faker->randomElements($test, 3));
         return $this->render('test/index.html.twig', [
             'controller_name' => 'TestController',
         ]);
     }
-    // méthode générant 30 championnats aléatoires
-    public function load()
-    {
-        for ($i = 0; $i < 30; $i++) {
-            $annee = 1950 + $i . "";
-            // dump($annee);
-            dump($this->randChamp($annee));
-        }
 
-        $manager->flush();
-    }
-
-    private function randChamp($year) {
-        return new Championnat($year);
-    }
-
-
-    // méthode randomisant des caractéristiques de joueur
-    private function randCaracts(EntityManager $em) : Caracteristique {
-        return new Caracteristique(
-            /* renommée (%) */
-            $this->faker->randomFloat(2, 0, 100),
-            /* vitesse (notation en %) */
-            $this->faker->randomFloat(2, 0, 100),
-            /* tir (notation en %) */
-            $this->faker->randomFloat(2, 0, 100),
-            /* salaire annuel */
-            $this->faker->randomFloat(2, 10000, 182000000),
-            /* dribble (notation en %) */
-            $this->faker->randomFloat(2, 0, 100),
-            /* renommée (notation en %) */
-            $this->faker->randomFloat(2, 0, 100)
-        );
-    }
-
-    // méthode randomisant un joueur selon sa position sur le terrain
-    private function randJoueur(EntityManager $em, $position) : Joueur {
-        // randomisation de caracteristiques
-        $cars = $this->randCaracts($em);
-
-        // randomisation d'un joueur est goal
-        $joueur = new Joueur(
-            $position,
-            /* prénom */
-            $this->faker->firstName(),
-            /* nom */
-            $this->faker->lastName(),
-            /* statut */
-            $this->faker->randomElements($status = ['Principal-e', 'Réserve', 'Remplaçant-e'])[0]
-        );
-
-        // s'il s'agit d'un gardien de but
-        if ($position == 'Goal') {
-            // on lui ajoute une caractéristique arrêt (notation en %)
-            $cars->setArret($this->faker->randomFloat(2, 0, 100));
-        }
-
-        // on fait persister les caractéristiques
-        $em->persist($cars);
-
-        // on assigne les caractéristiques obtenues au joueur
-        $joueur->setCaracteristiques($cars);
-
-        return $joueur;
-    }
+    
+ 
 
     // méthode générant un joueur aléatoire selon sa position sur le terrain et le faisant persister
-    private function addRandJoueur(EntityManager $em, string $position) : Joueur {
-        $joueur = $this->randJoueur($em, $position);
-        // persistance du joueur
-        $em->persist($joueur);
+    private function addRandJoueur(string $position) : Joueur {
+        $joueur = $this->randJoueur($position);
 
         return $joueur;
     }
-
-    private function randEquipe(EntityManager $em) : Equipe {
+    
+    private function randEquipe() : Equipe {
         $positions = ['Avant', 'Centre', 'Arrière', 'Goal'];
 
         // nom de la ville
@@ -124,7 +59,7 @@ class TestController extends AbstractController
             /* ville */
             $this->faker->city(),
             /* nom de l'équipe */
-            $this->faker->randomElements($prefixe = ['O', 'FC', 'SC', 'AJ', 'Stade'])[0] . " ". $city,
+            $this->faker->randomElement($prefixe = ['O', 'FC', 'SC', 'AJ', 'Stade']) . " ". $city,
             /* budget */
             $this->faker->randomFloat(2, 60000, 5555000000),
             /* renommée */
@@ -136,12 +71,12 @@ class TestController extends AbstractController
             // s'il s'agit du goal
             if ($position == 'Goal') {
                 // on n'en ajoute qu'un
-                $equipe->addJoueur($this->addRandJoueur($em, $position));
+                $equipe->addJoueur($this->addRandJoueur($position));
                 break;
             }
             // sinon, on ajoute 3 joueurs de chaque position
             for ($i=0; $i<3; $i++) {
-                $equipe->addJoueur($this->addRandJoueur($em, $position));
+                $equipe->addJoueur($this->addRandJoueur($position));
             }
         } 
 
@@ -151,15 +86,15 @@ class TestController extends AbstractController
             // ajout de chaque membre du staff à l'équipe
             $equipe->addStaff($manager);
             // persistance de chaque membre du staff
-            $em->persist($manager);
+            // $em->persist($manager);
         }
 
         // on fait persister l'équipe
-        $em->persist($equipe);
+        // $em->persist($equipe);
 
         return $equipe;
     }
-
+    
     // méthode randomisant un manager selon son poste
     private function randManager(string $poste) : Manager {
         return new Manager(
@@ -172,16 +107,7 @@ class TestController extends AbstractController
             $poste
         );
     }
-
-    // méthode générant un manager aléatoire selon son poste et l'ajoute à un staff entré en argument
-    private function addRandManager(/* array */ $staff, $poste) {
-        $manager = $this->randManager($poste);
-        // ajout du manager au staff
-        array_push($staff, $manager);
-
-        return $staff;
-    }
-
+    
     // méthode randomisant un staff complet et le retournant
     private function randStaff() {
         $staff = [];
@@ -198,10 +124,10 @@ class TestController extends AbstractController
             // randomisation de 1 à 5 entraîneurs (nombre aléatoire)
             if ($poste == 'Entraîneur') {
                 for ($i=0; $i<mt_rand(1, 5); $i++) {
-                    array_push($staff, $poste);
+                    array_push($staff, $this->randManager($poste));
                 }
             }
-            array_push($staff, $poste);
+            array_push($staff, $this->randManager($poste));
         }
         
         return $staff;

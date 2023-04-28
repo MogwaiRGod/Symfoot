@@ -40,7 +40,8 @@ class Rencontre
     #[ORM\JoinColumn(nullable: false)]
     private ?Equipe $equipe2 = null;
 
-    public function __construct(string $dt, Equipe $eq1, Equipe $eq2) {
+    public function __construct(string $dt, Equipe $eq1, Equipe $eq2) 
+    {
         $this->occasions1 = $this->randOccasion();
         $this->occasions2 = $this->randOccasion();
         $this->date = $dt;
@@ -149,7 +150,43 @@ class Rencontre
         return $this;
     }
 
-    private function randOccasion() {
+    // simule un match ; retourne un tableau associatif avec le score final de chaque équipe
+    public function match(Equipe $eq1, Equipe $eq2) : mixed
+    {
+        // à chaque minute du match
+        for ($i=0; $i<90; $i++) {
+
+        }
+        return;
+    }
+
+    // méthode déterminant des minutes où chaque équipe aura une occasion de marquer, selon le nombre d'occasions 
+    // dont elles disposent. Retourne un tableau associatif de deux tableaux, chacun contenant les minutes d'occasion
+    private function randMinutesOcc(int $nbOccs1, int $nbOccs2) : mixed
+    {
+        // tableau de toutes les minutes d'occasions
+        $allOccasions = [];
+        // tant que ce tableau ne contient pas assez de minutes
+        while(count($allOccasions) < $nbOccs1+$nbOccs2) {
+            // détermine une minute aléatoire et l'ajoute au tableau
+            array_push($allOccasions, mt_rand(0, 89));
+            // enlève les doublons
+            $allOccasions = array_unique($allOccasions);
+        }
+        // on découpe le tableau obtenu en 2 -> un pour chaque équipe
+        // et on trie les minutes en ordre décroissant
+        $minutes1 = arsort(array_slice($allOccasions, 0, $nbOccs1-1));
+        $minutes2 = arsort(array_slice($allOccasions, $nbOccs1-1));
+
+        return [
+            'equipe1' => $minutes1, 
+            'equipe2' => $minutes2
+        ];
+    }
+
+    // calcule des occasions de tirs alétoires
+    private function randOccasion() :int 
+    {
         return mt_rand(0, 20);
     }
 }

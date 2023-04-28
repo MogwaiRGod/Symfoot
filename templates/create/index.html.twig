@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+{# {% block javascripts %}
+<script>
+        formManagers.style.visiblity = 'hidden';
+        formJoueurs.style.visiblity = 'hidden';
+        function managers() {
+            formJoueurs.style.visiblity = 'hidden';
+            formEquipe.style.visiblity = 'hidden';
+            formManagers.style.visiblity = 'visible';
+        }
+</script>
+{% endblock %}         #}
+{% block body %}
+<style>
+    label, input, button {
+        display: block;
+    }
+    {# #formJoueurs, #formManagers {
+        display: none;
+    } #}
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col col-lg-2">
+            <div class="btn-group-vertical">
+                <a id="btnequipe" type="button" class="btn btn-primary" href="/create/team">Equipe</a>
+                <a id="btnmanagers" type="button" class="btn btn-primary">Managers</a>
+                <a id="btnjoueurs" type="button" class="btn btn-primary">Joueurs</a>
+                <a type="button" class="btn btn-dark" href="/">Retour</a>
+            </div>
+        </div>
+
+        <div class="col">
+            <form method="POST" action="/create/team/process">
+                <div id="formEquipe">
+                    <label for="nom">Nom</label>
+                    <input type="text" id="nom" name="nom" placeholder="Nom du club" value="FC Nantes" required>
+                    <label for="ville">Ville</label>
+                    <input type="text" id="ville" name="ville" placeholder="Ville" value="Nantes" required>
+                    <textarea placeholder="Description de l'équipe" name="desc" value="Les canaris"></textarea>
+
+                    <button class="btn btn-success col-accueil" type="submit">Suivant</button>
+                <div>
+
+                <div class="col" id="formManagers">
+                    <h2>Directeur général</h2>
+                    <label for="nomdg">Nom</label>
+                    <input type="text" id="nom" name="nomdg" placeholder="Nom" value="Love" required>
+                    <label for="prenomdg">Prénom</label>
+                    <input type="text" id="prenomdg" name="prenomdg" placeholder="Prénom" value="Pedro" required>
+                    <label for="salairedg">Salaire</label>
+                    <input type="number" id="salairedg" name="salairedg" placeholder="20000" value="20000" required>
+
+                    <h2>Directeur sportif</h2>
+                    <label for="nomds">Nom</label>
+                    <input type="text" id="nomds" name="nomds" placeholder="Nom" value="Gros" required>
+                    <label for="prenomds">Prénom</label>
+                    <input type="text" id="prenomds" name="prenomds" placeholder="Prénom" value="Bill" required>
+                    <label for="salaireds">Salaire</label>
+                    <input type="number" id="salaireds" name="salaireds" placeholder="20000" required>
+
+                    <h2>Directeur des médias</h2>
+                    <label for="nomdm">Nom</label>
+                    <input type="text" id="nom" name="nomdm" placeholder="Nom" value="Stack" required>
+                    <label for="prenomdm">Prénom</label>
+                    <input type="text" id="prenomdm" name="prenomdm" placeholder="Prénom" value="Billy" required>
+                    <label for="salairedm">Salaire</label>
+                    <input type="number" id="salairedm" name="salairedm" placeholder="20000" required>
+
+                    <h2>Entraîneur</h2>
+                    <label for="nomentr">Nom</label>
+                    <input type="text" id="nomentr" name="nomentr" placeholder="Nom" value="Reziki" required>
+                    <label for="prenomentr">Prénom</label>
+                    <input type="text" id="prenomentr" name="prenomentr" placeholder="Prénom" value="Yassine" required>
+                    <label for="salaireentr">Salaire</label>
+                    <input type="number" id="salaireentr" name="salaireentr" placeholder="20000" required>
+
+                    <h2>Entraîneur suppléant</h2>
+                    <label for="nomsuppl">Nom</label>
+                    <input type="text" id="nomsuppl" name="nomsuppl" placeholder="Nom" value="BB" required>
+                    <label for="prenomsuppl">Prénom</label>
+                    <input type="text" id="prenomsuppl" name="prenomsuppl" placeholder="Prénom" value="Brigitte" required>
+                    <label for="salairesuppl">Salaire</label>
+                    <input type="text" id="salairesuppl" name="salairesuppl" placeholder="20000" required>
+            
+                    {# <button class="btn btn-success col-accueil" type="submit">Recruter manager</button> #}
+                </div>
+
+                <div id="formJoueurs">
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prénom</th>
+                                <th scope="col">Rôle</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Vitesse</th>
+                                <th scope="col">Dribble</th>
+                                <th scope="col">Tir</th>
+                                <th scope="col">Renommée</th>
+                                <th scope="col">Salaire</th>
+                                <th scope="col">Arrêt</th>
+                                <th scope="col">Recruter</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for joueur in joueurs %}
+                            <tr>
+                                <td>{{ joueur.nom }}</td>
+                                <td>{{ joueur.prenom }}</td>
+                                <td>{{ joueur.position }}</td>
+                                <td>{{ joueur.statut }}</td>
+                                <td>{{ joueur.caracteristiques.vitesse }}</td>
+                                <td>{{ joueur.caracteristiques.dribble }}</td>
+                                <td>{{ joueur.caracteristiques.tir }}</td>
+                                <td>{{ joueur.caracteristiques.renommee }}</td>
+                                <td>{{ joueur.caracteristiques.salaire }}</td>
+                                <td>{{ joueur.caracteristiques.arret }}</td>
+                                <td><input type="checkbox"></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+
+            {% if message is defined %}
+            <aside>{{ message }}</aside>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

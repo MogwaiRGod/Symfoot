@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+<style>
+    label, input, button {
+        display: block;
+    }
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="btn-group-vertical">
+                <a type="button" class="btn btn-primary" href="/create/team">Equipe</a>
+                <a type="button" class="btn btn-primary" href="/create/managers">Managers</a>
+                <a type="button" class="btn btn-primary" href="/create/joueurs">Joueurs</a>
+                <a type="button" class="btn btn-dark" href="/">Retour</a>
+            </div>
+        </div>
+
+        <div class="col">
+            <form method="POST" action="/create/manager/process">
+                <h2>Directeur général</h2>
+                <label for="nomdg">Nom</label>
+                <input type="text" id="nom" name="nomdg" placeholder="Love" required>
+                <label for="prenomdg">Prénom</label>
+                <input type="text" id="prenomdg" name="prenomdg" placeholder="Pedro" required>
+                <label for="salairedg">Salaire</label>
+                <input type="text" id="salairedg" name="salairedg" placeholder="20000" required>
+
+                <h2>Directeur sportif</h2>
+                <label for="nomds">Nom</label>
+                <input type="text" id="nomds" name="nomds" placeholder="Love" required>
+                <label for="prenomds">Prénom</label>
+                <input type="text" id="prenomds" name="prenomds" placeholder="Pedro" required>
+                <label for="salaireds">Salaire</label>
+                <input type="text" id="salaireds" name="salaireds" placeholder="20000" required>
+
+                <h2>Directeur des médias</h2>
+                <label for="nomdm">Nom</label>
+                <input type="text" id="nom" name="nomdm" placeholder="Love" required>
+                <label for="prenomdm">Prénom</label>
+                <input type="text" id="prenomdm" name="prenomdm" placeholder="Pedro" required>
+                <label for="salairedm">Salaire</label>
+                <input type="text" id="salairedm" name="salairedm" placeholder="20000" required>
+
+                <h2>Entraîneur</h2>
+                <label for="nomentr">Nom</label>
+                <input type="text" id="nomentr" name="nomentr" placeholder="Love" required>
+                <label for="prenomentr">Prénom</label>
+                <input type="text" id="prenomentr" name="prenomentr" placeholder="Pedro" required>
+                <label for="salaireentr">Salaire</label>
+                <input type="text" id="salaireentr" name="salaireentr" placeholder="20000" required>
+
+                <h2>Entraîneur suppléant</h2>
+                <label for="nomsuppl">Nom</label>
+                <input type="text" id="nomsuppl" name="nomsuppl" placeholder="Love" required>
+                <label for="prenomsuppl">Prénom</label>
+                <input type="text" id="prenomsuppl" name="prenomsuppl" placeholder="Pedro" required>
+                <label for="salairesuppl">Salaire</label>
+                <input type="text" id="salairesuppl" name="salairesuppl" placeholder="20000" required>
+                
+                <button class="btn btn-success col-accueil" type="submit">Recruter manager</button>
+            </form>
+            {% if message is defined %}
+            <aside>{{ message }}</aside>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

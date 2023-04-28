@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\Entity\addChampionnat;
 use App\Repository\EquipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EquipeRepository::class)]
@@ -39,7 +41,10 @@ class Equipe
     #[ORM\OneToMany(mappedBy: 'vainqueur', targetEntity: Championnat::class)]
     private Collection $championnats;
 
-    public function __construct($vll, $nm, $bdgt, $rnmm)
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    public function __construct($vll, $nm, $bdgt, $rnmm, $desc = null)
     {
         $this->ville = $vll;
         $this->nom = $nm;
@@ -48,6 +53,7 @@ class Equipe
         $this->joueurs = new ArrayCollection();
         $this->staff = new ArrayCollection();
         $this->championnats = new ArrayCollection();
+        $this->description = $desc;
     }
 
     public function getId(): ?int
@@ -201,6 +207,18 @@ class Equipe
                 $championnat->setVainqueur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+<style>
+    label, input, button {
+        display: block;
+    }
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="btn-group-vertical">
+                <a type="button" class="btn btn-primary" href="/create/team">Equipe</a>
+                <a type="button" class="btn btn-primary" href="/create/managers">Managers</a>
+                <a type="button" class="btn btn-primary" href="/create/joueurs">Joueurs</a>
+                <a type="button" class="btn btn-dark" href="/">Retour</a>
+            </div>
+        </div>
+
+        <div class="col">
+            <form method="POST" action="/create/team/process">
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" name="nom" placeholder="Love" required>
+                <label for="ville">ville</label>
+                <input type="text" id="ville" name="ville" placeholder="Pedro" required>
+                <textarea placeholder="Description de l'équipe"></textarea>
+                
+                <button class="btn btn-success col-accueil" type="submit">Créer équipe</button>
+            </form>
+            {% if message is defined %}
+            <aside>{{ message }}</aside>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
