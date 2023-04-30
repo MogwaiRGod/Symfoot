@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\RencontreRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Equipe;
+use App\Entity\Joueur;
 
 #[ORM\Entity(repositoryClass: RencontreRepository::class)]
 class Rencontre
@@ -153,11 +155,84 @@ class Rencontre
     // simule un match ; retourne un tableau associatif avec le score final de chaque équipe
     public function match(Equipe $eq1, Equipe $eq2) : mixed
     {
+        $tmpOcc = $this->randMinutesOcc($this->occasions1, $this->occasions2);
+        $occEqp1 = $tmpOcc['equipe1'];
+        $occEqp2 = $tmpOcc['equipe2'];
+        $butsEq1 = 0;
+        $butsEq2 = 0;
+
+
         // à chaque minute du match
         for ($i=0; $i<90; $i++) {
-
+            // si la minute en court correspond à une occasion de marquer pour l'une ou l'autre des équipes
+            if($occEqp1[count($occEqp1)-1] == $i) {
+                // si la tentative réussit
+                if($this->essayerBut($eq1, $eq2)) {
+                    $butsEq1++;
+                }
+            }
+            elseif($occEqp2[count($occEqp2)-1] == $i) {
+                if($this->essayerBut($eq2, $eq1)) {
+                    $butsEq2++;
+                }
+            }
         }
-        return;
+        
+        return [
+            'equipe1' => $butsEq1,
+            'equipe2' => $butsEq2
+        ];
+    }
+
+    // méthode sélectionnant un joueur aléatoire d'une équipe pour tenter de marquer un but
+    private function randJoueurTir($equipe) : Joueur
+    {
+        do {
+            $joueur = $equipe->getJoueurs()[array_rand($equipe->getJoueurs())];
+        } while ($joueur->getPosition() == 'Goal');
+
+        return $joueur;
+    }
+
+    // méthode simulant un essai de tir et retournant s'il est réussi ou non
+    private function essayerBut($equipeAttaque, $equipeAdverse) : bool
+    {
+        $joueur = $this->randJoueurTir($equipeAttaque);
+        // p(A)
+        $chancesTir = $this->calcChances($joueur);
+        // p(B)
+        $chancesRepousser = $this->calcChancesRepousser($equipeAdverse);
+        // p(A ET B)
+        $probas = $chancesTir*$chancesRepousser;
+
+        // simulation de l'événement <=> on tire un numéro au hasard de 0 à 100
+        $simulation = mt_rand(0, 100);
+        // si ce numéro est compris entre 0 et la probabilité de marquer
+        if ($simulation <= $probas) {
+            return TRUE;
+        }
+        else {
+            return FALSE;
+        }
+    }
+
+    // méthode déterminant les chances de repousser un but d'un goal et/ou des défenseurs
+    // respectivement selon leurs stats d'arrêt et de dribble
+    private function calcChancesRepousser($equipe) : float
+    {
+        $listeStatsDribble;
+        // récupération du goal
+        $goal = $equipe->getGoal();
+        // récupération de ses stats d'arrêt
+        $chancesGoal = $goal->getCaracteristiques()->getArret();
+
+        // récupération des stats de dribble des défenseurs
+        foreach($equipe->getDefenseurs() as $defenseur) {
+            array_push($listeStatsDribble, $defenseur->getCaracteristiques()->getDribble());
+        }
+        // on calcule la moyenne de ces stats
+        $chancesDefense = array_sum(/* additionne tous les éléments de la liste */$listeStatsDribble)/count($listeStatsDribble);
+        return ($chancesDefense*0.33/* pondération de 33% */ + $chancesGoal*0.67/* pondération de 67% */)/2;
     }
 
     // méthode déterminant des minutes où chaque équipe aura une occasion de marquer, selon le nombre d'occasions 

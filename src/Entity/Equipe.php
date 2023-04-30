@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\addChampionnat;
+use App\Entity\Joueur;
 use App\Repository\EquipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -221,5 +222,27 @@ class Equipe
         $this->description = $description;
 
         return $this;
+    }
+
+    // méthode retournant le goal de l'équipe
+    public function getGoal(): Joueur
+    {
+        foreach($this->joueurs as $joueur) {
+            if ($goal = $joueur->getPosition() == 'Goal') {
+                return $goal;
+            }
+        }
+    }
+
+    // méthode retournant la liste des défenseurs (Arrière) de l'équipe
+    public function getDefenseurs(): mixed
+    {
+        $defenseurs;
+        foreach($this->joueurs as $joueur) {
+            if ($joueur->getPosition() == 'Arrière') {
+                array_push($defenseurs, $joueur);
+            }
+        }
+        return $defenseurs;
     }
 }
