@@ -40,6 +40,26 @@ class ChampionnatRepository extends ServiceEntityRepository
         }
     }
 
+    public function lastYear()
+    {
+        // connexion à la BDD
+        $conn = $this->getEntityManager()->getConnection();
+
+        // requête
+        $statement = '
+            SELECT max(annee) AS max
+            FROM `championnat`;
+        ';
+        // préparation de la requête
+        $query = $conn->prepare($statement);
+        // récupération du résultat
+        $result = $query->executeQuery();
+
+        // on retourne le résultat
+        return $result->fetch()["max"];
+         
+    }
+
     // // méthode vérifiant qu'une année entrée en argument n'a pas déjà un championnat d'enregistré
     // public static function checkYear($year) : bool {
     //     $repo = new ChampionnatRepository($this->registry);

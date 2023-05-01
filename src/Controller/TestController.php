@@ -31,11 +31,7 @@ class TestController extends AbstractController
     #[Route('/test', name: 'app_test')]
     public function index(ChampionnatRepository $repo): Response
     {
-        $test = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        dump($this->faker->randomElements($test, 3));
-        return $this->render('test/index.html.twig', [
-            'controller_name' => 'TestController',
-        ]);
+        dump($repo->lastYear());
     }
 
     
