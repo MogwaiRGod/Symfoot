@@ -164,16 +164,30 @@ class Rencontre
 
         // à chaque minute du match
         for ($i=0; $i<90; $i++) {
-            // si la minute en court correspond à une occasion de marquer pour l'une ou l'autre des équipes
+            // si la minute en cours correspond à une occasion de marquer pour l'une ou l'autre équipe
             if($occEqp1[count($occEqp1)-1] == $i) {
+                // on définit le joueur qui va tenter un but
+                $joueur = $this->randJoueurTir($eq1);
+                echo "A la " . $i . "e minute, " . $joueur->getNom() . " s'approche de la cage adverse...";
                 // si la tentative réussit
-                if($this->essayerBut($eq1, $eq2)) {
+                if($this->essayerBut($joueur, $eq1, $eq2)) {
+                    echo $eq1->getNom() . " a marqué !";
                     $butsEq1++;
+                }
+                else {
+                    echo "Eh non, c'est un échec pour " . $eq1->getNom() ;
                 }
             }
             elseif($occEqp2[count($occEqp2)-1] == $i) {
-                if($this->essayerBut($eq2, $eq1)) {
+                // on définit le joueur qui va tenter un but
+                $joueur = $this->randJoueurTir($eq2);
+                echo "A la " . $i . "e minute, " . $joueur->getNom() . " s'approche de la cage adverse...";
+                if($this->essayerBut($joueur, $eq2, $eq1)) {
+                    echo $eq2->getNom() . " a marqué !";
                     $butsEq2++;
+                }
+                else {
+                    echo "Eh non, c'est un échec pour " . $eq2->getNom() ;
                 }
             }
         }
@@ -195,9 +209,8 @@ class Rencontre
     }
 
     // méthode simulant un essai de tir et retournant s'il est réussi ou non
-    private function essayerBut($equipeAttaque, $equipeAdverse) : bool
+    private function essayerBut($joueur, $equipeAttaque, $equipeAdverse) : bool
     {
-        $joueur = $this->randJoueurTir($equipeAttaque);
         // p(A)
         $chancesTir = $this->calcChances($joueur);
         // p(B)
